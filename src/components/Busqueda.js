@@ -10,7 +10,6 @@ const Busqueda = (props) => {
   //Obtener state de context
   const productoContext = useContext(productosContext);
   const {
-    obtenerProductos,
     guardarConsulta,
     consulta,
   } = productoContext;
@@ -26,8 +25,6 @@ const Busqueda = (props) => {
 
     if (consulta.trim() === "") return;
 
-    obtenerProductos([])
-    
     props.history.push({
       pathname: '/items',
       search: `?search=${consulta}`

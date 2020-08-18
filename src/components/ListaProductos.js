@@ -3,7 +3,6 @@ import Busqueda from './Busqueda'
 import productosContext from './../context/productosContext';
 import CardProducto from './CardProducto'
 import BreadCumb from "./BreadCumb";
-import clienteAxios from "../config/axios";
 import NoRecords from "./NoRecords";
 
 const ListaProductos = (props) => {
@@ -13,10 +12,8 @@ const ListaProductos = (props) => {
   const { 
     listaProductos,
     mostrarError,
-    seleccionarProducto, 
-    obtenerProductos,
-    obtenerCategorias,
-    manejarError
+    seleccionarProducto,
+    apiRequestItems
   } = productoContext;
 
   // Capturamos queryParam desde url
@@ -26,26 +23,10 @@ const ListaProductos = (props) => {
   
   useEffect(() => {
     if(search != null) { 
-      buscarItems();
+      apiRequestItems(search);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search])
-
-  const buscarItems = async () => {
-    try {
-      clienteAxios.get(
-        `${process.env.REACT_APP_REST_ENDPOINT}items/?q=${search}`
-      ).then(res => {
-        const { items, categories } = res.data;
-        obtenerProductos(items);
-        obtenerCategorias(categories);
-        seleccionarProducto({});
-      })
-      .catch(err => {
-        manejarError(true)
-      })
-    } catch (error) {}
-  }
 
   // Encargado de redirigir al detalle del item
   const verProducto = producto => {

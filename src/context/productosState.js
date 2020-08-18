@@ -2,6 +2,8 @@
 import React, { useReducer } from 'react';
 import productoContext from './productosContext';
 import productoReducer from './productosReducer';
+import clienteAxios from "../config/axios";
+
 import { 
     CARGAR_PRODUCTOS,
     CARGAR_CATEGORIAS,
@@ -30,6 +32,22 @@ const ProyectoState = props => {
             type: GUARDAR_CONSULTA,
             payload: consulta
         })
+    }
+
+    // Encargado de consultar items desde el api
+    const apiRequestItems = search => {
+        limpiarResultados()
+        clienteAxios.get(
+            `${process.env.REACT_APP_REST_ENDPOINT}items/?q=${search}`
+          ).then(res => {
+            const { items, categories } = res.data;
+            obtenerProductos(items);
+            obtenerCategorias(categories);
+            guardarConsulta(search);
+          })
+          .catch(err => {
+            manejarError(true)
+          })
     }
 
     // Encargado de disparar el evento para obtener productos segun consulta
@@ -64,6 +82,13 @@ const ProyectoState = props => {
         })
     }
 
+    // Limpiar resultados de busqueda
+    const limpiarResultados = () => {
+        obtenerProductos([]);
+        obtenerCategorias([]);
+        seleccionarProducto({});
+    }
+
     return (
         <productoContext.Provider
             value={{
@@ -73,6 +98,7 @@ const ProyectoState = props => {
                 productoSeleccionado: state.productoSeleccionado,
                 mostrarError: state.mostrarError,
                 guardarConsulta,
+                apiRequestItems,
                 obtenerProductos,
                 obtenerCategorias,
                 seleccionarProducto,
